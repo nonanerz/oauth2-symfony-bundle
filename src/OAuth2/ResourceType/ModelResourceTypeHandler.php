@@ -29,13 +29,9 @@ class ModelResourceTypeHandler extends AbstractResourceTypeHandler
             'accessToken' => $accessToken,
         ]);
         if ($accessTokenStored === null) {
-            throw new InvalidRequestException([
-                'error_description' => 'The provided access token is invalid.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The provided access token is invalid.']);
         } elseif ($accessTokenStored->getExpires() < new \DateTime()) {
-            throw new InvalidRequestException([
-                'error_description' => 'The provided access token is expired.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The provided access token is expired.']);
         }
 
         return $accessTokenStored;

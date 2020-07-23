@@ -21,7 +21,7 @@ class InMemoryTest extends WebTestCase
     /**
      * @group legacy
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

@@ -13,9 +13,8 @@ namespace AuthBucket\OAuth2\Controller;
 
 use AuthBucket\OAuth2\Exception\InvalidRequestException;
 use AuthBucket\OAuth2\GrantType\GrantTypeHandlerFactoryInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -23,7 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @author Wong Hoi Sing Edison <hswong3i@pantarei-design.com>
  */
-class TokenController extends Controller
+class TokenController extends AbstractController
 {
     protected $validator;
     protected $grantTypeHandlerFactory;
@@ -45,9 +44,7 @@ class TokenController extends Controller
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\GrantType(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // Handle token endpoint response.

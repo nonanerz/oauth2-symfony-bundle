@@ -68,9 +68,7 @@ abstract class AbstractGrantTypeHandler implements GrantTypeHandlerInterface
     {
         $token = $this->tokenStorage->getToken();
         if ($token === null || !$token instanceof ClientCredentialsToken) {
-            throw new ServerErrorException([
-                'error_description' => 'The authorization server encountered an unexpected condition that prevented it from fulfilling the request.',
-            ]);
+            throw new ServerErrorException(['error_description' => 'The authorization server encountered an unexpected condition that prevented it from fulfilling the request.']);
         }
 
         return $token->getClientId();
@@ -102,9 +100,7 @@ abstract class AbstractGrantTypeHandler implements GrantTypeHandlerInterface
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\Scope(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         $scope = preg_split('/\s+/', $scope);
@@ -119,9 +115,7 @@ abstract class AbstractGrantTypeHandler implements GrantTypeHandlerInterface
             }
         }
         if (array_intersect($scope, $scopeSupported) !== $scope) {
-            throw new InvalidScopeException([
-                'error_description' => 'The requested scope is unknown.',
-            ]);
+            throw new InvalidScopeException(['error_description' => 'The requested scope is unknown.']);
         }
 
         // Compare if given scope within all authorized scopes.
@@ -138,14 +132,10 @@ abstract class AbstractGrantTypeHandler implements GrantTypeHandlerInterface
             $grantTypeAuthorized = $result->getGrantType();
         }
         if (array_intersect($scope, $scopeAuthorized) !== $scope) {
-            throw new InvalidScopeException([
-                'error_description' => 'The requested scope exceeds the scope granted by the resource owner.',
-            ]);
+            throw new InvalidScopeException(['error_description' => 'The requested scope exceeds the scope granted by the resource owner.']);
         }
         if (!in_array(static::GRANT_TYPE, $grantTypeAuthorized)) {
-            throw new InvalidGrantException([
-                'error_description' => 'The requested grant is invalid.',
-            ]);
+            throw new InvalidGrantException(['error_description' => 'The requested grant is invalid.']);
         }
 
         return $scope;

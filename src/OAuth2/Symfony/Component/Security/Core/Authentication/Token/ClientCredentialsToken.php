@@ -94,18 +94,18 @@ class ClientCredentialsToken extends AbstractToken implements ClientInterface
         return '';
     }
 
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize([
+        return [
             $this->providerKey,
             $this->clientId,
             $this->clientSecret,
             $this->redirectUri,
-            parent::serialize(),
-        ]);
+            parent::__serialize(),
+        ];
     }
 
-    public function unserialize($str)
+    public function __unserialize($str): void
     {
         list(
             $this->providerKey,

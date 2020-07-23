@@ -143,9 +143,9 @@ class AccessToken extends AbstractToken implements AccessTokenInterface
         return '';
     }
 
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize([
+        return [
             $this->providerKey,
             $this->accessToken,
             $this->tokenType,
@@ -153,11 +153,11 @@ class AccessToken extends AbstractToken implements AccessTokenInterface
             $this->username,
             $this->expires,
             $this->scope,
-            parent::serialize(),
-        ]);
+            parent::__serialize(),
+        ];
     }
 
-    public function unserialize($str)
+    public function __unserialize($str): void
     {
         list(
             $this->providerKey,

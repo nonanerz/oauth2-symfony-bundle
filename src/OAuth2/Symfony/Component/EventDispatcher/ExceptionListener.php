@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -28,7 +28,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class ExceptionListener implements EventSubscriberInterface
 {
     /**
-     * @var null|LoggerInterface
+     * @var LoggerInterface|null
      */
     private $logger;
 
@@ -37,9 +37,9 @@ class ExceptionListener implements EventSubscriberInterface
         $this->logger = $logger;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
         do {
             if ($exception instanceof ExceptionInterface) {
                 return $this->handleException($event, $exception);
@@ -60,7 +60,7 @@ class ExceptionListener implements EventSubscriberInterface
     }
 
     private function handleException(
-        GetResponseForExceptionEvent $event,
+        ExceptionEvent $event,
         ExceptionInterface $exception
     ) {
         if (null !== $this->logger) {
@@ -87,11 +87,11 @@ class ExceptionListener implements EventSubscriberInterface
             unset($message['redirect_uri']);
             $redirectUri = Request::create($redirectUri, 'GET', $message)->getUri();
 
-            $response = RedirectResponse::create($redirectUri);
+            $response = new RedirectResponse($redirectUri);
         } else {
             $code = $exception->getCode();
 
-            $response = JsonResponse::create($message, $code, [
+            $response = new JsonResponse($message, $code, [
                 'Cache-Control' => 'no-store',
                 'Pragma' => 'no-cache',
             ]);

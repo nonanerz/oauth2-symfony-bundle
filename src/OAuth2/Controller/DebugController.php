@@ -13,10 +13,9 @@ namespace AuthBucket\OAuth2\Controller;
 
 use AuthBucket\OAuth2\Exception\ServerErrorException;
 use AuthBucket\OAuth2\Symfony\Component\Security\Core\Authentication\Token\AccessToken;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -24,7 +23,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  *
  * @author Wong Hoi Sing Edison <hswong3i@pantarei-design.com>
  */
-class DebugController extends Controller
+class DebugController extends AbstractController
 {
     protected $tokenStorage;
 
@@ -39,9 +38,7 @@ class DebugController extends Controller
         // Fetch authenticated access token from security context.
         $token = $this->tokenStorage->getToken();
         if ($token === null || !$token instanceof AccessToken) {
-            throw new ServerErrorException([
-                'error_description' => 'The authorization server encountered an unexpected condition that prevented it from fulfilling the request.',
-            ]);
+            throw new ServerErrorException(['error_description' => 'The authorization server encountered an unexpected condition that prevented it from fulfilling the request.']);
         }
 
         // Handle debug endpoint response.
@@ -54,7 +51,7 @@ class DebugController extends Controller
             'scope' => $token->getScope(),
         ];
 
-        return JsonResponse::create($parameters, 200, [
+        return new JsonResponse($parameters, 200, [
             'Cache-Control' => 'no-store',
             'Pragma' => 'no-cache',
         ]);

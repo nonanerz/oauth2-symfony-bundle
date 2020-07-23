@@ -9,8 +9,6 @@ framework:
     form:            ~
     csrf_protection: ~
     validation:      { enable_annotations: true }
-    templating:
-        engines: [ 'twig' ]
     default_locale:  en
     fragments:       ~
     test: ~
@@ -21,6 +19,7 @@ framework:
 
 # Twig Configuration
 twig:
+    exception_controller: null
     debug:            true
     strict_variables: true
 

@@ -66,6 +66,6 @@ class CodeResponseTypeHandler extends AbstractResponseTypeHandler
 
         $redirectUri = Request::create($redirectUri, 'GET', $parameters)->getUri();
 
-        return RedirectResponse::create($redirectUri);
+        return new RedirectResponse($redirectUri);
     }
 }

@@ -52,7 +52,7 @@ class PasswordGrantTypeHandler extends AbstractGrantTypeHandler
                 $scope
             );
 
-        return JsonResponse::create($parameters, 200, [
+        return new JsonResponse($parameters, 200, [
             'Cache-Control' => 'no-store',
             'Pragma' => 'no-cache',
         ]);
@@ -77,9 +77,7 @@ class PasswordGrantTypeHandler extends AbstractGrantTypeHandler
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\Username(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // password must exist and in valid format.
@@ -89,9 +87,7 @@ class PasswordGrantTypeHandler extends AbstractGrantTypeHandler
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\Password(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // Validate credentials with authentication manager.
@@ -105,9 +101,7 @@ class PasswordGrantTypeHandler extends AbstractGrantTypeHandler
             );
             $authenticationProvider->authenticate($token);
         } catch (BadCredentialsException $e) {
-            throw new InvalidGrantException([
-                'error_description' => 'The provided resource owner credentials is invalid.',
-            ]);
+            throw new InvalidGrantException(['error_description' => 'The provided resource owner credentials is invalid.']);
         }
 
         return $username;

@@ -36,16 +36,12 @@ class TokenTypeHandlerFactory implements TokenTypeHandlerFactoryInterface
 
         foreach ($classes as $class) {
             if (!class_exists($class)) {
-                throw new ServerErrorException([
-                    'error_description' => 'The token type is not supported by the authorization server.',
-                ]);
+                throw new ServerErrorException(['error_description' => 'The token type is not supported by the authorization server.']);
             }
 
             $reflection = new \ReflectionClass($class);
             if (!$reflection->implementsInterface('AuthBucket\\OAuth2\\TokenType\\TokenTypeHandlerInterface')) {
-                throw new ServerErrorException([
-                    'error_description' => 'The token type is not supported by the authorization server.',
-                ]);
+                throw new ServerErrorException(['error_description' => 'The token type is not supported by the authorization server.']);
             }
         }
 
@@ -57,9 +53,7 @@ class TokenTypeHandlerFactory implements TokenTypeHandlerFactoryInterface
         $type = $type ?: current(array_keys($this->classes));
 
         if (!isset($this->classes[$type]) || !class_exists($this->classes[$type])) {
-            throw new ServerErrorException([
-                'error_description' => 'The token type is not supported by the authorization server.',
-            ]);
+            throw new ServerErrorException(['error_description' => 'The token type is not supported by the authorization server.']);
         }
 
         $class = $this->classes[$type];

@@ -36,16 +36,12 @@ class ResourceTypeHandlerFactory implements ResourceTypeHandlerFactoryInterface
 
         foreach ($classes as $class) {
             if (!class_exists($class)) {
-                throw new ServerErrorException([
-                    'error_description' => 'The resource type is not supported by the resource server.',
-                ]);
+                throw new ServerErrorException(['error_description' => 'The resource type is not supported by the resource server.']);
             }
 
             $reflection = new \ReflectionClass($class);
             if (!$reflection->implementsInterface('AuthBucket\\OAuth2\\ResourceType\\ResourceTypeHandlerInterface')) {
-                throw new ServerErrorException([
-                    'error_description' => 'The resource type is not supported by the resource server.',
-                ]);
+                throw new ServerErrorException(['error_description' => 'The resource type is not supported by the resource server.']);
             }
         }
 
@@ -57,9 +53,7 @@ class ResourceTypeHandlerFactory implements ResourceTypeHandlerFactoryInterface
         $type = $type ?: current(array_keys($this->classes));
 
         if (!isset($this->classes[$type]) || !class_exists($this->classes[$type])) {
-            throw new ServerErrorException([
-                'error_description' => 'The resource type is not supported by the resource server.',
-            ]);
+            throw new ServerErrorException(['error_description' => 'The resource type is not supported by the resource server.']);
         }
 
         $class = $this->classes[$type];

@@ -16,10 +16,9 @@ use AuthBucket\OAuth2\Exception\InvalidRequestException;
 use AuthBucket\OAuth2\Symfony\Component\Security\Core\Authentication\Token\AccessToken;
 use AuthBucket\OAuth2\TokenType\TokenTypeHandlerFactoryInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Http\Firewall\ListenerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -27,7 +26,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @author Wong Hoi Sing Edison <hswong3i@pantarei-design.com>
  */
-class ResourceListener implements ListenerInterface
+class ResourceListener
 {
     protected $providerKey;
     protected $tokenStorage;
@@ -55,7 +54,7 @@ class ResourceListener implements ListenerInterface
         $this->accessTokenRoles = $accessTokenRoles;
     }
 
-    public function handle(GetResponseEvent $event)
+    public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -81,9 +80,7 @@ class ResourceListener implements ListenerInterface
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\AccessToken(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         if (null !== $this->logger) {

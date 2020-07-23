@@ -43,7 +43,7 @@ class RefreshTokenGrantTypeHandler extends AbstractGrantTypeHandler
                 $scope
             );
 
-        return JsonResponse::create($parameters, 200, [
+        return new JsonResponse($parameters, 200, [
             'Cache-Control' => 'no-store',
             'Pragma' => 'no-cache',
         ]);
@@ -72,9 +72,7 @@ class RefreshTokenGrantTypeHandler extends AbstractGrantTypeHandler
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\RefreshToken(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // scope may not exists, else must be in valid format.
@@ -83,9 +81,7 @@ class RefreshTokenGrantTypeHandler extends AbstractGrantTypeHandler
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\Scope(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // Check refresh_token with database record.
@@ -94,13 +90,9 @@ class RefreshTokenGrantTypeHandler extends AbstractGrantTypeHandler
             'refreshToken' => $refreshToken,
         ]);
         if ($result === null || $result->getClientId() !== $clientId) {
-            throw new InvalidGrantException([
-                'error_description' => 'The provided refresh token was issued to another client.',
-            ]);
+            throw new InvalidGrantException(['error_description' => 'The provided refresh token was issued to another client.']);
         } elseif ($result->getExpires() < new \DateTime()) {
-            throw new InvalidGrantException([
-                'error_description' => 'The provided refresh token is expired.',
-            ]);
+            throw new InvalidGrantException(['error_description' => 'The provided refresh token is expired.']);
         }
 
         // Fetch username from stored refresh_token.
@@ -117,9 +109,7 @@ class RefreshTokenGrantTypeHandler extends AbstractGrantTypeHandler
             // Compare if given scope within all available granted scopes.
             $scope = preg_split('/\s+/', $scope);
             if (array_intersect($scope, $scopeGranted) !== $scope) {
-                throw new InvalidScopeException([
-                    'error_description' => 'The requested scope exceeds the scope granted by the resource owner.',
-                ]);
+                throw new InvalidScopeException(['error_description' => 'The requested scope exceeds the scope granted by the resource owner.']);
             }
         }
         // Return original refresh_token's scope if not specify in new request.
@@ -138,9 +128,7 @@ class RefreshTokenGrantTypeHandler extends AbstractGrantTypeHandler
                 }
             }
             if (array_intersect($scope, $scopeSupported) !== $scope) {
-                throw new InvalidScopeException([
-                    'error_description' => 'The requested scope is unknown.',
-                ]);
+                throw new InvalidScopeException(['error_description' => 'The requested scope is unknown.']);
             }
 
             // Compare if given scope within all authorized scopes.
@@ -154,9 +142,7 @@ class RefreshTokenGrantTypeHandler extends AbstractGrantTypeHandler
                 $scopeAuthorized = $authorizeResult->getScope();
             }
             if (array_intersect($scope, $scopeAuthorized) !== $scope) {
-                throw new InvalidScopeException([
-                    'error_description' => 'The requested scope exceeds the scope granted by the resource owner.',
-                ]);
+                throw new InvalidScopeException(['error_description' => 'The requested scope exceeds the scope granted by the resource owner.']);
             }
         }
 

@@ -13,12 +13,12 @@ namespace AuthBucket\Bundle\OAuth2Bundle\Tests\TestBundle\Controller;
 
 use AuthBucket\OAuth2\Controller\AuthorizationController;
 use AuthBucket\OAuth2\Exception\InvalidScopeException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Client;
+use Symfony\Component\HttpKernel\HttpKernelBrowser;
 use Symfony\Component\Security\Core\Security;
 
-class DemoController extends Controller
+class DemoController extends AbstractController
 {
     public function indexAction(Request $request)
     {
@@ -38,7 +38,7 @@ class DemoController extends Controller
         $_username = $session->get('_username');
         $_password = $session->get('_password');
 
-        return $this->render('TestBundle:demo:login.html.twig', [
+        return $this->render('@Test/demo/login.html.twig', [
             'error' => $error,
             '_username' => $_username,
             '_password' => $_password,
@@ -212,7 +212,7 @@ class DemoController extends Controller
             'client_secret' => 'uoce8AeP',
         ];
         $server = [];
-        $client = new Client($this->get('kernel'));
+        $client = new HttpKernelBrowser($this->get('kernel'));
         $crawler = $client->request('POST', '/api/oauth2/token', $parameters, [], $server);
         $accessTokenResponse = json_decode($client->getResponse()->getContent(), true);
         $accessTokenRequest = get_object_vars($client->getRequest());
@@ -250,7 +250,7 @@ class DemoController extends Controller
             'PHP_AUTH_USER' => 'resource_owner_password_credentials_grant',
             'PHP_AUTH_PW' => 'Eevahph6',
         ];
-        $client = new Client($this->get('kernel'));
+        $client = new HttpKernelBrowser($this->get('kernel'));
         $crawler = $client->request('POST', '/api/oauth2/token', $parameters, [], $server);
         $accessTokenResponse = json_decode($client->getResponse()->getContent(), true);
         $accessTokenRequest = get_object_vars($client->getRequest());
@@ -286,7 +286,7 @@ class DemoController extends Controller
             'PHP_AUTH_USER' => 'client_credentials_grant',
             'PHP_AUTH_PW' => 'yib6aiFe',
         ];
-        $client = new Client($this->get('kernel'));
+        $client = new HttpKernelBrowser($this->get('kernel'));
         $crawler = $client->request('POST', '/api/oauth2/token', $parameters, [], $server);
         $accessTokenResponse = json_decode($client->getResponse()->getContent(), true);
         $accessTokenRequest = get_object_vars($client->getRequest());
@@ -322,7 +322,7 @@ class DemoController extends Controller
             'PHP_AUTH_USER' => $request->query->get('username'),
             'PHP_AUTH_PW' => $request->query->get('password'),
         ];
-        $client = new Client($this->get('kernel'));
+        $client = new HttpKernelBrowser($this->get('kernel'));
         $crawler = $client->request('POST', '/api/oauth2/token', $parameters, [], $server);
         $accessTokenResponse = json_decode($client->getResponse()->getContent(), true);
         $accessTokenRequest = get_object_vars($client->getRequest());
@@ -354,7 +354,7 @@ class DemoController extends Controller
         $server = [
             'HTTP_Authorization' => implode(' ', ['Bearer', $request->query->get('access_token')]),
         ];
-        $client = new Client($this->get('kernel'));
+        $client = new HttpKernelBrowser($this->get('kernel'));
         $crawler = $client->request('GET', '/api/resource/model', $parameters, [], $server);
         $resourceResponse = json_decode($client->getResponse()->getContent(), true);
         $resourceRequest = get_object_vars($client->getRequest());
@@ -371,7 +371,7 @@ class DemoController extends Controller
         $server = [
             'HTTP_Authorization' => implode(' ', ['Bearer', $request->query->get('access_token')]),
         ];
-        $client = new Client($this->get('kernel'));
+        $client = new HttpKernelBrowser($this->get('kernel'));
         $crawler = $client->request('GET', '/api/resource/debug_endpoint', $parameters, [], $server);
         $resourceResponse = json_decode($client->getResponse()->getContent(), true);
         $resourceRequest = get_object_vars($client->getRequest());

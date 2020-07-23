@@ -46,9 +46,7 @@ class TokenProvider implements AuthenticationProviderInterface
             'clientId' => $token->getClientId(),
         ]);
         if ($client === null || $client->getClientSecret() !== $token->getClientSecret()) {
-            throw new InvalidClientException([
-                'error_description' => 'Client authentication failed.',
-            ]);
+            throw new InvalidClientException(['error_description' => 'Client authentication failed.']);
         }
 
         $tokenAuthenticated = new ClientCredentialsToken(
@@ -56,7 +54,7 @@ class TokenProvider implements AuthenticationProviderInterface
             $client->getClientId(),
             $client->getClientSecret(),
             $client->getRedirectUri(),
-            $token->getRoles()
+            $token->getRoleNames()
         );
         $tokenAuthenticated->setUser($client->getClientId());
 

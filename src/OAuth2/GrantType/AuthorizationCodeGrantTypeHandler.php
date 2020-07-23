@@ -45,7 +45,7 @@ class AuthorizationCodeGrantTypeHandler extends AbstractGrantTypeHandler
                 $scope
             );
 
-        return JsonResponse::create($parameters, 200, [
+        return new JsonResponse($parameters, 200, [
             'Cache-Control' => 'no-store',
             'Pragma' => 'no-cache',
         ]);
@@ -73,9 +73,7 @@ class AuthorizationCodeGrantTypeHandler extends AbstractGrantTypeHandler
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\Code(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // Check code with database record.
@@ -84,13 +82,9 @@ class AuthorizationCodeGrantTypeHandler extends AbstractGrantTypeHandler
             'code' => $code,
         ]);
         if ($result === null || $result->getClientId() !== $clientId) {
-            throw new InvalidGrantException([
-                'error_description' => 'The provided authorization grant is invalid.',
-            ]);
+            throw new InvalidGrantException(['error_description' => 'The provided authorization grant is invalid.']);
         } elseif ($result->getExpires() < new \DateTime()) {
-            throw new InvalidGrantException([
-                'error_description' => 'The provided authorization grant is expired.',
-            ]);
+            throw new InvalidGrantException(['error_description' => 'The provided authorization grant is expired.']);
         }
 
         // Delete this code so it can only be used once
@@ -119,9 +113,7 @@ class AuthorizationCodeGrantTypeHandler extends AbstractGrantTypeHandler
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\RedirectUri(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // redirect_uri is not required if already established via other channels,
@@ -138,18 +130,14 @@ class AuthorizationCodeGrantTypeHandler extends AbstractGrantTypeHandler
         // At least one of: existing redirect URI or input redirect URI must be
         // specified.
         if (!$stored && !$redirectUri) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request is missing a required parameter.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request is missing a required parameter.']);
         }
 
         // If there's an existing uri and one from input, verify that they match.
         if ($stored && $redirectUri) {
             // Ensure that the input uri starts with the stored uri.
             if (strcasecmp(substr($redirectUri, 0, strlen($stored)), $stored) !== 0) {
-                throw new InvalidGrantException([
-                    'error_description' => 'The provided authorization grant does not match the redirection URI used in the authorization request.',
-                ]);
+                throw new InvalidGrantException(['error_description' => 'The provided authorization grant does not match the redirection URI used in the authorization request.']);
             }
         }
 

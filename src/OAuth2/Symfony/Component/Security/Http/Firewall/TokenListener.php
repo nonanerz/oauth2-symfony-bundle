@@ -14,10 +14,9 @@ namespace AuthBucket\OAuth2\Symfony\Component\Security\Http\Firewall;
 use AuthBucket\OAuth2\Exception\InvalidRequestException;
 use AuthBucket\OAuth2\Symfony\Component\Security\Core\Authentication\Token\ClientCredentialsToken;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Http\Firewall\ListenerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -25,7 +24,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @author Wong Hoi Sing Edison <hswong3i@pantarei-design.com>
  */
-class TokenListener implements ListenerInterface
+class TokenListener
 {
     protected $providerKey;
     protected $tokenStorage;
@@ -50,16 +49,14 @@ class TokenListener implements ListenerInterface
         $this->clientTokenRoles = $clientTokenRoles;
     }
 
-    public function handle(GetResponseEvent $event)
+    public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
 
         // At least one of client credentials method required.
         // If more than one is set then basic auth will be used. Some clients (incorrectly) use more than one.
         if (!$request->headers->get('PHP_AUTH_USER', false) && !$request->request->get('client_id', false)) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request is missing a required parameter',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request is missing a required parameter']);
         }
 
         // Check with HTTP basic auth if exists.
@@ -82,9 +79,7 @@ class TokenListener implements ListenerInterface
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\ClientId(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // client_secret must in valid format.
@@ -93,9 +88,7 @@ class TokenListener implements ListenerInterface
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\ClientSecret(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         if (null !== $this->logger) {

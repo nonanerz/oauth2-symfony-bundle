@@ -67,14 +67,12 @@ class ResourceProvider implements AuthenticationProviderInterface
         $scope = $accessToken->getScope() ?: [];
         if ($this->scopeRequired) {
             if (array_intersect($this->scopeRequired, $scope) != $this->scopeRequired) {
-                throw new InvalidScopeException([
-                    'error_description' => 'The requested scope is malformed.',
-                ]);
+                throw new InvalidScopeException(['error_description' => 'The requested scope is malformed.']);
             }
         }
 
         $user = null;
-        $roles = $token->getRoles();
+        $roles = $token->getRoleNames();
         if ($this->userProvider) {
             try {
                 $user = $this->userProvider->loadUserByUsername($accessToken->getUsername());

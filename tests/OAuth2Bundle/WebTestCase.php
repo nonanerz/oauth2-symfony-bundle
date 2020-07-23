@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class WebTestCase extends KernelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         static::bootKernel();
     }

@@ -13,9 +13,8 @@ namespace AuthBucket\OAuth2\Controller;
 
 use AuthBucket\OAuth2\Exception\InvalidRequestException;
 use AuthBucket\OAuth2\ResponseType\ResponseTypeHandlerFactoryInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -23,7 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @author Wong Hoi Sing Edison <hswong3i@pantarei-design.com>
  */
-class AuthorizationController extends Controller
+class AuthorizationController extends AbstractController
 {
     protected $validator;
     protected $responseTypeHandlerFactory;
@@ -45,9 +44,7 @@ class AuthorizationController extends Controller
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\ResponseType(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // Handle authorize endpoint response.

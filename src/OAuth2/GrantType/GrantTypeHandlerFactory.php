@@ -52,16 +52,12 @@ class GrantTypeHandlerFactory implements GrantTypeHandlerFactoryInterface
 
         foreach ($classes as $class) {
             if (!class_exists($class)) {
-                throw new UnsupportedGrantTypeException([
-                    'error_description' => 'The authorization grant type is not supported by the authorization server.',
-                ]);
+                throw new UnsupportedGrantTypeException(['error_description' => 'The authorization grant type is not supported by the authorization server.']);
             }
 
             $reflection = new \ReflectionClass($class);
             if (!$reflection->implementsInterface('AuthBucket\\OAuth2\\GrantType\\GrantTypeHandlerInterface')) {
-                throw new UnsupportedGrantTypeException([
-                    'error_description' => 'The authorization grant type is not supported by the authorization server.',
-                ]);
+                throw new UnsupportedGrantTypeException(['error_description' => 'The authorization grant type is not supported by the authorization server.']);
             }
         }
 
@@ -73,9 +69,7 @@ class GrantTypeHandlerFactory implements GrantTypeHandlerFactoryInterface
         $type = $type ?: current(array_keys($this->classes));
 
         if (!isset($this->classes[$type]) || !class_exists($this->classes[$type])) {
-            throw new UnsupportedGrantTypeException([
-                'error_description' => 'The authorization grant type is not supported by the authorization server.',
-            ]);
+            throw new UnsupportedGrantTypeException(['error_description' => 'The authorization grant type is not supported by the authorization server.']);
         }
 
         $class = $this->classes[$type];

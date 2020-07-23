@@ -59,9 +59,7 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
     {
         $token = $this->tokenStorage->getToken();
         if (!$token->getUsername()) {
-            throw new ServerErrorException([
-                'error_description' => 'The authorization server encountered an unexpected condition that prevented it from fulfilling the request.',
-            ]);
+            throw new ServerErrorException(['error_description' => 'The authorization server encountered an unexpected condition that prevented it from fulfilling the request.']);
         }
 
         return $token->getUsername();
@@ -86,9 +84,7 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\ClientId(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // Compare client_id with database record.
@@ -97,9 +93,7 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
             'clientId' => $clientId,
         ]);
         if ($result === null) {
-            throw new UnauthorizedClientException([
-                'error_description' => 'The client is not authorized.',
-            ]);
+            throw new UnauthorizedClientException(['error_description' => 'The client is not authorized.']);
         }
 
         return $clientId;
@@ -125,9 +119,7 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\RedirectUri(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         // redirect_uri is not required if already established via other channels,
@@ -144,18 +136,14 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
         // At least one of: existing redirect URI or input redirect URI must be
         // specified.
         if (!$redirectUriStored && !$redirectUri) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request is missing a required parameter.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request is missing a required parameter.']);
         }
 
         // If there's an existing uri and one from input, verify that they match.
         if ($redirectUriStored && $redirectUri) {
             // Ensure that the input uri starts with the stored uri.
             if (strcasecmp(substr($redirectUri, 0, strlen($redirectUriStored)), $redirectUriStored) !== 0) {
-                throw new InvalidRequestException([
-                    'error_description' => 'The request includes an invalid parameter value',
-                ]);
+                throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value']);
             }
         }
 
@@ -174,10 +162,7 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\State(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'redirect_uri' => $redirectUri,
-                'error_description' => 'The request includes an invalid parameter value',
-            ]);
+            throw new InvalidRequestException(['redirect_uri' => $redirectUri, 'error_description' => 'The request includes an invalid parameter value']);
         }
 
         return $state;
@@ -202,11 +187,7 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\Scope(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'redirect_uri' => $redirectUri,
-                'state' => $state,
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['redirect_uri' => $redirectUri, 'state' => $state, 'error_description' => 'The request includes an invalid parameter value.']);
         }
 
         $scope = preg_split('/\s+/', $scope);
@@ -221,11 +202,7 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
             }
         }
         if (array_intersect($scope, $scopeSupported) !== $scope) {
-            throw new InvalidScopeException([
-                'redirect_uri' => $redirectUri,
-                'state' => $state,
-                'error_description' => 'The requested scope is unknown.',
-            ]);
+            throw new InvalidScopeException(['redirect_uri' => $redirectUri, 'state' => $state, 'error_description' => 'The requested scope is unknown.']);
         }
 
         // Compare if given scope within all authorized scopes.
@@ -240,18 +217,11 @@ abstract class AbstractResponseTypeHandler implements ResponseTypeHandlerInterfa
             $scopeAuthorized = $result->getScope();
         }
         if (array_intersect($scope, $scopeAuthorized) !== $scope) {
-            throw new InvalidScopeException([
-                'redirect_uri' => $redirectUri,
-                'state' => $state,
-                'error_description' => 'The requested scope is invalid.',
-            ]);
+            throw new InvalidScopeException(['redirect_uri' => $redirectUri, 'state' => $state, 'error_description' => 'The requested scope is invalid.']);
         }
 
         if (!in_array(static::GRANT_TYPE, $result->getGrantType())) {
-            throw new InvalidGrantException([
-                'state' => $state,
-                'error_description' => 'The requested grant is invalid.',
-            ]);
+            throw new InvalidGrantException(['state' => $state, 'error_description' => 'The requested grant is invalid.']);
         }
 
         return $scope;

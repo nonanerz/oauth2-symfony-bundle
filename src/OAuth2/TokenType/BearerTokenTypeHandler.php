@@ -34,16 +34,12 @@ class BearerTokenTypeHandler extends AbstractTokenTypeHandler
 
         // At least one (and only one) of client credentials method required.
         if (!$tokenHeaders && !$tokenRequest && !$tokenQuery) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request is missing a required parameter.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request is missing a required parameter.']);
         } elseif (($tokenHeaders && $tokenRequest)
             || ($tokenRequest && $tokenQuery)
             || ($tokenQuery && $tokenHeaders)
         ) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes multiple credentials.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes multiple credentials.']);
         }
 
         // Check with HTTP basic auth if exists.
@@ -57,9 +53,7 @@ class BearerTokenTypeHandler extends AbstractTokenTypeHandler
             new \AuthBucket\OAuth2\Symfony\Component\Validator\Constraints\AccessToken(),
         ]);
         if (count($errors) > 0) {
-            throw new InvalidRequestException([
-                'error_description' => 'The request includes an invalid parameter value.',
-            ]);
+            throw new InvalidRequestException(['error_description' => 'The request includes an invalid parameter value.']);
         }
 
         return $accessToken;

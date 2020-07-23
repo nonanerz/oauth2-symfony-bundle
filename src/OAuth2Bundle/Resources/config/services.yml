@@ -24,6 +24,15 @@ parameters:
         - ROLE_RESOURCE
 
 services:
+    _defaults:
+        autowire: false
+        autoconfigure: false
+
+    AuthBucket\Bundle\OAuth2Bundle\Tests\TestBundle\Controller\DemoController:
+        public: true
+        autowire: true
+        tags: ['controller.service_arguments']
+
     AuthBucket\OAuth2\Symfony\Component\EventDispatcher\ExceptionListener:
         arguments:
             - "@?logger"
